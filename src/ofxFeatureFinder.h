@@ -33,6 +33,7 @@ private:
     
     std::vector<ofxFeatureFinderObject> objects;
     std::vector<ofxFeatureFinderObject> detectedObjects;
+    std::vector<cv::Mat> detectedHomographies;
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
 

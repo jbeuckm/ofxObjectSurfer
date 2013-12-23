@@ -92,6 +92,7 @@ void ofxFeatureFinder::createObject() {
 void ofxFeatureFinder::detectObjects() {
     
     detectedObjects.clear();
+    detectedHomographies.clear();
 
     int i = 0;
     for(; i<objects.size(); i++){
@@ -100,6 +101,7 @@ void ofxFeatureFinder::detectObjects() {
         if (this->detectObject(object, homography)) {
             cout << "detected object " << i << endl;
             detectedObjects.push_back(object);
+            detectedHomographies.push_back(homography);
         }
     }
     
@@ -194,13 +196,27 @@ void ofxFeatureFinder::drawDetected() {
     ofPushMatrix();
     ofTranslate(rect.x, rect.y);
 
-    for(; it != detectedObjects.end(); ++it){
-        cout << "drawing detected object " << &it << " size " << (*it).outlines.size() << endl;
+    for(int i=0; i < detectedObjects.size(); i++){
+        
+        ofxFeatureFinderObject object = detectedObjects.at(i);
+        
+        cv::Mat H = detectedHomographies.at(i);
+        
+        ofPushMatrix();
+        ofMatrix4x4 transform = ofMatrix4x4(
+                                            H.at<double>(0,0), H.at<double>(1,0), 0, H.at<double>(2,0),
+                                            H.at<double>(0,1), H.at<double>(1,1), 0, H.at<double>(2,1),
+        0, 0, 1, 0,
+                                            H.at<double>(0,2), H.at<double>(1,2), 0, H.at<double>(2,2)
+        );
 
-        vector<ofPolyline>::iterator line = (*it).outlines.begin();
-        for(; line != (*it).outlines.end(); ++line){
+        ofMultMatrix(transform);
+        vector<ofPolyline>::iterator line = object.outlines.begin();
+        for(; line != object.outlines.end(); ++line){
             (*line).draw();
         }
+        
+        ofPopMatrix();
     }
     
     ofPopMatrix();
