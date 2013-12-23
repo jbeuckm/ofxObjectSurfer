@@ -10,8 +10,6 @@
 
 ofxFeatureFinder::ofxFeatureFinder() {
     
-    storage = cvCreateMemStorage(0);
-    
     ofRegisterMouseEvents(this);
     
     bDrawingRegion = false;
@@ -30,11 +28,11 @@ void ofxFeatureFinder::clearRegions() {
 }
 
 
-void ofxFeatureFinder::findKeypoints(IplImage *_image) {
+void ofxFeatureFinder::findKeypoints(ofxCvGrayscaleImage _image) {
     
     image = _image;
     
-    cv::Mat mat = cv::cvarrToMat(image);
+    cv::Mat mat = cv::cvarrToMat(image.getCvImage());
     
     imageKeypoints.clear();
    
@@ -73,7 +71,7 @@ void ofxFeatureFinder::createObject() {
         return;
     }
 
-    cv::Mat mat = cv::cvarrToMat(image);
+    cv::Mat mat = cv::cvarrToMat(image.getCvImage());
     
     cv::DescriptorExtractor * extractor = new cv::SurfDescriptorExtractor();
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
@@ -182,11 +180,19 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
 
 
 void ofxFeatureFinder::draw() {
+    this->drawImage();
+    
     this->drawFeatures();
     this->drawRegions();
     
     this->drawDetected();
 }
+
+
+void ofxFeatureFinder::drawImage() {
+    image.draw(rect.x, rect.y, rect.width, rect.height);
+}
+
 
 void ofxFeatureFinder::drawDetected() {
     vector<ofxFeatureFinderObject>::iterator it = detectedObjects.begin();
@@ -206,7 +212,7 @@ void ofxFeatureFinder::drawDetected() {
         ofMatrix4x4 transform = ofMatrix4x4(
                                             H.at<double>(0,0), H.at<double>(1,0), 0, H.at<double>(2,0),
                                             H.at<double>(0,1), H.at<double>(1,1), 0, H.at<double>(2,1),
-        0, 0, 1, 0,
+                                            0, 0, 1, 0,
                                             H.at<double>(0,2), H.at<double>(1,2), 0, H.at<double>(2,2)
         );
 
@@ -241,13 +247,12 @@ void ofxFeatureFinder::drawRegions() {
 
 void ofxFeatureFinder::drawFeatures() {
     if (!imageKeypoints.size()) return;
-    if (!image) return;
     
     ofEnableAlphaBlending();
     ofFill();
     
-    float cx = (float)rect.width / (float)image->width;
-    float cy = (float)rect.height / (float)image->height;
+    float cx = (float)rect.width / (float)image.width;
+    float cy = (float)rect.height / (float)image.height;
     
     
     ofPushMatrix();

@@ -15,15 +15,14 @@
 #include <opencv2/calib3d/calib3d.hpp> // for homography
 
 #include "ofMain.h"
+#include "ofxOpenCv.h"
 #include "ofxFeatureFinderObject.h"
 
 
 class ofxFeatureFinder {
 private:
     ofRectangle rect;
-    IplImage *image;
-    
-    CvMemStorage* storage;
+    ofxCvGrayscaleImage image;
     
     std::vector<ofPolyline> regions;
     bool bDrawingRegion;
@@ -44,9 +43,10 @@ public:
     
     void setFrame(int x, int y, int width, int height);
     
-    void findKeypoints(IplImage *image);
+    void findKeypoints(ofxCvGrayscaleImage _image);
     
     void draw();
+    void drawImage();
     void drawFeatures();
     void drawRegions();
     void drawDetected();
