@@ -57,12 +57,12 @@ void ofxFeatureFinder::createObject() {
     // collect the selected keypoints
     for(i = 0; i < imageKeypoints.size(); i++ )
     {
-        cv::KeyPoint r = imageKeypoints.at(i);
+        cv::KeyPoint keypt = imageKeypoints.at(i);
         
         for(it = regions.begin(); it != regions.end(); ++it){
-            if ((*it).inside(r.pt.x, r.pt.y)) {
+            if ((*it).inside(keypt.pt.x, keypt.pt.y)) {
                 
-                selectedKeypoints.push_back(r);
+                selectedKeypoints.push_back(keypt);
                 
                 break;
             }
@@ -79,7 +79,7 @@ void ofxFeatureFinder::createObject() {
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
     delete extractor;
     
-    ofxFeatureFinderObject object = ofxFeatureFinderObject(selectedKeypoints, selectedDescriptors);
+    ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
     objects.push_back(object);
     
     cout << "added object with " << selectedKeypoints.size() << " keypoints.";
@@ -90,6 +90,8 @@ void ofxFeatureFinder::createObject() {
 
 
 void ofxFeatureFinder::detectObjects() {
+    
+    detectedObjects.clear();
 
     int i = 0;
     for(; i<objects.size(); i++){
@@ -97,6 +99,7 @@ void ofxFeatureFinder::detectObjects() {
         cv::Mat homography;
         if (this->detectObject(object, homography)) {
             cout << "detected object " << i << endl;
+            detectedObjects.push_back(object);
         }
     }
     
@@ -168,9 +171,6 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
 
         cout << inliers << " in / " << outliers << " out" << endl;
         
-        // Do what you want with the homography (like showing a rectangle)
-        // The "outlier_mask" contains a mask representing the inliers and outliers.
-        // ...
         return true;
     }
     
@@ -182,8 +182,29 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
 void ofxFeatureFinder::draw() {
     this->drawFeatures();
     this->drawRegions();
+    
+    this->drawDetected();
 }
 
+void ofxFeatureFinder::drawDetected() {
+    vector<ofxFeatureFinderObject>::iterator it = detectedObjects.begin();
+    
+    ofSetColor(0, 0, 255);
+
+    ofPushMatrix();
+    ofTranslate(rect.x, rect.y);
+
+    for(; it != detectedObjects.end(); ++it){
+        cout << "drawing detected object " << &it << " size " << (*it).outlines.size() << endl;
+
+        vector<ofPolyline>::iterator line = (*it).outlines.begin();
+        for(; line != (*it).outlines.end(); ++line){
+            (*line).draw();
+        }
+    }
+    
+    ofPopMatrix();
+}
 
 void ofxFeatureFinder::drawRegions() {
     

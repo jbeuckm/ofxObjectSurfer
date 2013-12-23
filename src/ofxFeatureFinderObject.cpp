@@ -9,8 +9,9 @@
 #include "ofxFeatureFinderObject.h"
 
 
-ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors) {
+ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors) {
 
+    outlines = _outlines;
     keypoints = _keypoints;
     descriptors = _descriptors;
     

@@ -32,6 +32,7 @@ private:
     cv::Mat imageDescriptors;
     
     std::vector<ofxFeatureFinderObject> objects;
+    std::vector<ofxFeatureFinderObject> detectedObjects;
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
 
@@ -47,6 +48,7 @@ public:
     void draw();
     void drawFeatures();
     void drawRegions();
+    void drawDetected();
     
     void createObject();
     
