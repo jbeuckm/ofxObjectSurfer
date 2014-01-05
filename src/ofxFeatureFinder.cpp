@@ -80,7 +80,9 @@ void ofxFeatureFinder::createObject() {
     ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
     objects.push_back(object);
     
-    cout << "added object with " << selectedKeypoints.size() << " keypoints.";
+    cout << "added object with " << selectedKeypoints.size() << " keypoints." << endl;
+    
+    object.save();
     
     this->clearRegions();
 }
@@ -123,9 +125,6 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
     flannIndex.knnSearch(object.descriptors, results, dists, k, cv::flann::SearchParams() );
 
     
-    ////////////////////////////
-    // PROCESS NEAREST NEIGHBOR RESULTS
-    ////////////////////////////
     // Find correspondences by NNDR (Nearest Neighbor Distance Ratio)
     float nndrRatio = 0.6;
     std::vector<cv::Point2f> mpts_1, mpts_2; // Used for homography
@@ -150,11 +149,7 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
 
     if(mpts_1.size() >= nbMatches)
     {
-        homography = findHomography(mpts_1,
-                                   mpts_2,
-                                   cv::RANSAC,
-                                   1.0,
-                                   outlier_mask);
+        homography = findHomography(mpts_1, mpts_2, cv::RANSAC, 1.0, outlier_mask);
 
         uint inliers=0, outliers=0;
         for(unsigned int k=0; k<mpts_1.size();++k)

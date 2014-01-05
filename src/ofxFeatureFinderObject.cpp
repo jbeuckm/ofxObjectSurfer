@@ -8,6 +8,11 @@
 
 #include "ofxFeatureFinderObject.h"
 
+ofxFeatureFinderObject::ofxFeatureFinderObject() {//std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors);
+    outlines = std::vector<ofPolyline>();
+    keypoints = std::vector<cv::KeyPoint>();
+    descriptors = cv::Mat();
+}
 
 ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors) {
 
@@ -18,41 +23,50 @@ ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines
 }
 
 
-void ofxFeatureFinderObject::save(std::ostream & streamPtr) const
+void ofxFeatureFinderObject::save()
 {
-    /*
-    streamPtr << id_ << detectorType_ << descriptorType_;
-    streamPtr << (int)keypoints_.size();
-    for(unsigned int j=0; j<keypoints_.size(); ++j)
+    cv::FileStorage fs("descriptors.yml", cv::FileStorage::WRITE);
+    if (!fs.isOpened()) {
+        cout << "ERROR OPENING FILE ";
+        return;
+    }
+    cout << "now saving " << keypoints.size() << " keypoints..." << endl;
+
+    fs << "keypoints" << "[";
+    
+    for(unsigned int j=0; j<keypoints.size(); ++j)
     {
-        streamPtr << keypoints_.at(j).angle <<
-        keypoints_.at(j).class_id <<
-        keypoints_.at(j).octave <<
-        keypoints_.at(j).pt.x <<
-        keypoints_.at(j).pt.y <<
-        keypoints_.at(j).response <<
-        keypoints_.at(j).size;
+        fs << "[" <<
+        keypoints.at(j).angle <<
+        keypoints.at(j).class_id <<
+        keypoints.at(j).octave <<
+        keypoints.at(j).pt.x <<
+        keypoints.at(j).pt.y <<
+        keypoints.at(j).response <<
+        keypoints.at(j).size <<
+        "]";
     }
     
-    qint64 dataSize = descriptors_.elemSize()*descriptors_.cols*descriptors_.rows;
-    streamPtr << descriptors_.rows <<
-    descriptors_.cols <<
-    descriptors_.type() <<
-    dataSize;
-    streamPtr << QByteArray((char*)descriptors_.data, dataSize);
-    streamPtr << pixmap_;
-     */
+    fs << "]";
+
+    cout << "now saving descriptors..." << endl;
+    fs << "descriptors" << descriptors;
+
+    fs.release();
+    cout << "saving complete" << endl;
+    
 }
 
-void ofxFeatureFinderObject::load(std::istream & streamPtr) const
+
+void ofxFeatureFinderObject::load()
 {
-    /*
+/*
     std::vector<cv::KeyPoint> kpts;
     cv::Mat descriptors;
     
     int nKpts;
-    QString detectorType, descriptorType;
-    streamPtr >> id_ >> detectorType >> descriptorType >> nKpts;
+
+    streamPtr >> nKpts;
     for(int i=0;i<nKpts;++i)
     {
         cv::KeyPoint kpt;
@@ -67,15 +81,16 @@ void ofxFeatureFinderObject::load(std::istream & streamPtr) const
         kpts.push_back(kpt);
     }
     
-    int rows,cols,type;
-    qint64 dataSize;
+    int rows, cols, type;
+    int dataSize;
+
     streamPtr >> rows >> cols >> type >> dataSize;
-    QByteArray data;
-    streamPtr >> data;
-    descriptors = cv::Mat(rows, cols, type, data.data()).clone();
-    streamPtr >> pixmap_;
-    this->setData(kpts, descriptors, cv::Mat(), detectorType, descriptorType);
-    cvImage_ = cvtQImage2CvMat(pixmap_.toImage());
+*/
+//    streamPtr >> data;
+//    descriptors = cv::Mat(rows, cols, type, data.data()).clone();
+    
+//    this->setData(kpts, descriptors, cv::Mat(), detectorType, descriptorType);
+
+    //    cvImage_ = cvtQImage2CvMat(pixmap_.toImage());
     //this->setMinimumSize(image_.size());
-     */
 }
