@@ -52,6 +52,7 @@ public:
     void drawDetected();
     
     void createObject();
+    void loadObject();
     
     void clearRegions();
 

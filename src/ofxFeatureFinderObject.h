@@ -23,15 +23,15 @@ class ofxFeatureFinderObject {
 
 public:
     
-    ofxFeatureFinderObject();//std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors);
+    ofxFeatureFinderObject();
     ofxFeatureFinderObject(std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors);
     
     std::vector<ofPolyline> outlines;
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
 
-    void save(string filename);
-    void load(string filename);
+    void save(string filepath);
+    void load(string filepath);
 
 };
 

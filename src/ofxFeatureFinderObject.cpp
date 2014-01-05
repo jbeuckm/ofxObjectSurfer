@@ -23,12 +23,12 @@ ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines
 }
 
 
-void ofxFeatureFinderObject::save(string filename)
+void ofxFeatureFinderObject::save(string filepath)
 {
     cv::FileStorage fs;
-    fs.open(ofToDataPath(filename), cv::FileStorage::WRITE);
+    fs.open(filepath, cv::FileStorage::WRITE);
     if (!fs.isOpened()) {
-        cout << "ERROR OPENING FILE ";
+        cout << "ERROR OPENING FILE TO WRITE" << endl;
         return;
     }
     cout << "now saving " << keypoints.size() << " keypoints..." << endl;
@@ -39,15 +39,15 @@ void ofxFeatureFinderObject::save(string filename)
     {
         cv::KeyPoint kp = keypoints.at(j);
         
-        fs << "[" <<
-        kp.angle <<
-        kp.class_id <<
-        kp.octave <<
-        kp.pt.x <<
-        kp.pt.y <<
-        kp.response <<
-        kp.size <<
-        "]";
+        fs << "{" <<
+        "angle" << kp.angle <<
+        "class_id" << kp.class_id <<
+        "octave" << kp.octave <<
+        "x" << kp.pt.x <<
+        "y" << kp.pt.y <<
+        "response" << kp.response <<
+        "size" << kp.size <<
+        "}";
     }
     
     fs << "]";
@@ -61,39 +61,43 @@ void ofxFeatureFinderObject::save(string filename)
 }
 
 
-void ofxFeatureFinderObject::load(string filename)
+void ofxFeatureFinderObject::load(string filepath)
 {
-/*
-    std::vector<cv::KeyPoint> kpts;
-    cv::Mat descriptors;
-    
-    int nKpts;
-
-    streamPtr >> nKpts;
-    for(int i=0;i<nKpts;++i)
-    {
-        cv::KeyPoint kpt;
-        streamPtr >>
-        kpt.angle >>
-        kpt.class_id >>
-        kpt.octave >>
-        kpt.pt.x >>
-        kpt.pt.y >>
-        kpt.response >>
-        kpt.size;
-        kpts.push_back(kpt);
+    cv::FileStorage fs;
+    fs.open(filepath, cv::FileStorage::READ);
+    if (!fs.isOpened()) {
+        cout << "ERROR OPENING FILE TO READ" << endl;
+        return;
     }
-    
-    int rows, cols, type;
-    int dataSize;
 
-    streamPtr >> rows >> cols >> type >> dataSize;
-*/
-//    streamPtr >> data;
-//    descriptors = cv::Mat(rows, cols, type, data.data()).clone();
+    cv::FileNode keypointsList = fs["keypoints"];
+    cv::FileNodeIterator it = keypointsList.begin(), it_end = keypointsList.end();
+    int idx = 0;
+    std::vector<uchar> lbpval;
     
-//    this->setData(kpts, descriptors, cv::Mat(), detectorType, descriptorType);
+    for( ; it != it_end; ++it, idx++ )
+    {
+        cv::KeyPoint kp;
 
-    //    cvImage_ = cvtQImage2CvMat(pixmap_.toImage());
-    //this->setMinimumSize(image_.size());
+        kp.angle = (*it)["angle"];
+        kp.class_id = (*it)["class_id"];
+        kp.octave = (*it)["octave"];
+        kp.pt.x = (*it)["x"];
+        kp.pt.y = (*it)["y"];
+        kp.response = (*it)["response"];
+        kp.size = (*it)["size"];
+        
+        keypoints.push_back(kp);
+    }
+    cout << "loaded " << keypoints.size() << " keypoints." << endl;
+    
+    cv::FileNode descriptorsNode = fs["descriptors"];
+    descriptorsNode >> descriptors;
+
+    cout << "loaded descriptors." << endl;
+
+    fs.release();
+    cout << "ofxFeatureFinderObject::load complete" << endl;
 }
+
+
