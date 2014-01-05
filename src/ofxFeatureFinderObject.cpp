@@ -23,9 +23,10 @@ ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines
 }
 
 
-void ofxFeatureFinderObject::save()
+void ofxFeatureFinderObject::save(string filename)
 {
-    cv::FileStorage fs("descriptors.yml", cv::FileStorage::WRITE);
+    cv::FileStorage fs;
+    fs.open(ofToDataPath(filename), cv::FileStorage::WRITE);
     if (!fs.isOpened()) {
         cout << "ERROR OPENING FILE ";
         return;
@@ -36,14 +37,16 @@ void ofxFeatureFinderObject::save()
     
     for(unsigned int j=0; j<keypoints.size(); ++j)
     {
+        cv::KeyPoint kp = keypoints.at(j);
+        
         fs << "[" <<
-        keypoints.at(j).angle <<
-        keypoints.at(j).class_id <<
-        keypoints.at(j).octave <<
-        keypoints.at(j).pt.x <<
-        keypoints.at(j).pt.y <<
-        keypoints.at(j).response <<
-        keypoints.at(j).size <<
+        kp.angle <<
+        kp.class_id <<
+        kp.octave <<
+        kp.pt.x <<
+        kp.pt.y <<
+        kp.response <<
+        kp.size <<
         "]";
     }
     
@@ -58,7 +61,7 @@ void ofxFeatureFinderObject::save()
 }
 
 
-void ofxFeatureFinderObject::load()
+void ofxFeatureFinderObject::load(string filename)
 {
 /*
     std::vector<cv::KeyPoint> kpts;

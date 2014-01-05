@@ -82,7 +82,7 @@ void ofxFeatureFinder::createObject() {
     
     cout << "added object with " << selectedKeypoints.size() << " keypoints." << endl;
     
-    object.save();
+    object.save("object.yml");
     
     this->clearRegions();
 }

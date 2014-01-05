@@ -30,8 +30,8 @@ public:
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
 
-    void save();
-    void load();
+    void save(string filename);
+    void load(string filename);
 
 };
 
