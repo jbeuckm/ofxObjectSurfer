@@ -12,6 +12,14 @@ ofxFeatureFinder::ofxFeatureFinder() {
     ofRegisterMouseEvents(this);
     
     bDrawingRegion = false;
+
+    detector = new cv::SurfFeatureDetector();
+    extractor = new cv::SurfDescriptorExtractor();
+}
+
+ofxFeatureFinder::~ofxFeatureFinder() {
+    delete detector;
+    delete extractor;
 }
 
 void ofxFeatureFinder::setFrame(int x, int y, int width, int height) {
@@ -33,15 +41,9 @@ void ofxFeatureFinder::findKeypoints(ofxCvGrayscaleImage _image) {
     
     cv::Mat mat = cv::cvarrToMat(image.getCvImage());
     
-    imageKeypoints.clear();
-   
-    cv::FeatureDetector * detector = new cv::SurfFeatureDetector();
     detector->detect(mat, imageKeypoints);
-    delete detector;
 
-    cv::DescriptorExtractor * extractor = new cv::SurfDescriptorExtractor();
     extractor->compute(mat, imageKeypoints, imageDescriptors);
-    delete extractor;
 }
 
 void ofxFeatureFinder::createObject() {
@@ -72,9 +74,7 @@ void ofxFeatureFinder::createObject() {
 
     cv::Mat mat = cv::cvarrToMat(image.getCvImage());
     
-    cv::DescriptorExtractor *extractor = new cv::SurfDescriptorExtractor();
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
-    delete extractor;
     
     ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
     objects.push_back(object);

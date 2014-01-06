@@ -21,6 +21,10 @@
 class ofxFeatureFinder {
 
 private:
+    cv::FeatureDetector * detector;
+    cv::DescriptorExtractor * extractor;
+
+    
     ofRectangle rect;
     ofxCvGrayscaleImage image;
     
@@ -38,6 +42,7 @@ private:
 
 public:
     ofxFeatureFinder();
+    ~ofxFeatureFinder();
 
     CvSeq *getImageKeypoints();
     
