@@ -1,6 +1,5 @@
 //
-//  ObjectFeatureDescription.cpp
-//  ofxKinectOsc
+//  ofxFeatureFinderObject.cpp
 //
 //  Created by joe on 12/21/13.
 //
@@ -8,18 +7,16 @@
 
 #include "ofxFeatureFinderObject.h"
 
-ofxFeatureFinderObject::ofxFeatureFinderObject() {//std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors);
+ofxFeatureFinderObject::ofxFeatureFinderObject() {
     outlines = std::vector<ofPolyline>();
     keypoints = std::vector<cv::KeyPoint>();
     descriptors = cv::Mat();
 }
 
 ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors) {
-
     outlines = _outlines;
     keypoints = _keypoints;
     descriptors = _descriptors;
-    
 }
 
 

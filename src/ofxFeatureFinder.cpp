@@ -1,6 +1,5 @@
 //
-//  featureManager.cpp
-//  ofxKinectOsc
+//  ofxFeatureFinder.cpp
 //
 //  Created by joe on 12/18/13.
 //
@@ -73,7 +72,7 @@ void ofxFeatureFinder::createObject() {
 
     cv::Mat mat = cv::cvarrToMat(image.getCvImage());
     
-    cv::DescriptorExtractor * extractor = new cv::SurfDescriptorExtractor();
+    cv::DescriptorExtractor *extractor = new cv::SurfDescriptorExtractor();
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
     delete extractor;
     
@@ -82,15 +81,32 @@ void ofxFeatureFinder::createObject() {
     
     cout << "added object with " << selectedKeypoints.size() << " keypoints." << endl;
     
-    object.save(ofToDataPath("object.yml"));
+    this->saveObject(object);
     
     this->clearRegions();
+    
 }
 
+void ofxFeatureFinder::saveObject(ofxFeatureFinderObject object) {
+
+    ofFileDialogResult res = ofSystemSaveDialog("object.yml", "Save Object Description");
+
+    if (res.bSuccess) {
+        object.save(res.getPath());
+    }
+}
+
+
 void ofxFeatureFinder::loadObject() {
-    ofxFeatureFinderObject object = ofxFeatureFinderObject();
-    object.load(ofToDataPath("object.yml"));
-    objects.push_back(object);
+
+    ofFileDialogResult res = ofSystemLoadDialog("Load Object Description");
+    
+    if (res.bSuccess) {
+
+        ofxFeatureFinderObject object;
+        object.load(res.getPath());
+        objects.push_back(object);
+    }
 }
 
 

@@ -1,13 +1,12 @@
 //
-//  featureManager.h
-//  ofxKinectOsc
+//  ofxFeatureFinder.h
 //
 //  Created by joe on 12/18/13.
 //
 //
 
-#ifndef __ofxKinectOsc__featureManager__
-#define __ofxKinectOsc__featureManager__
+#ifndef OFXFEATUREFINDER
+#define OFXFEATUREFINDER
 
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -20,6 +19,7 @@
 
 
 class ofxFeatureFinder {
+
 private:
     ofRectangle rect;
     ofxCvGrayscaleImage image;
@@ -52,6 +52,7 @@ public:
     void drawDetected();
     
     void createObject();
+    void saveObject(ofxFeatureFinderObject object);
     void loadObject();
     
     void clearRegions();
@@ -65,4 +66,4 @@ public:
 
 };
 
-#endif /* defined(__ofxKinectOsc__featureManager__) */
+#endif /* defined(OFXFEATUREFINDER) */
