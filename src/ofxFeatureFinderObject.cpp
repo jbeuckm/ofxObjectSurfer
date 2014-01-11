@@ -87,8 +87,9 @@ bool ofxFeatureFinderObject::load(string filepath)
         cout << "ERROR OPENING FILE TO READ" << endl;
         return false;
     }
-    
-    label = filepath;
+   
+    ofFile f = ofFile(filepath);
+    label = f.getBaseName();
     
     cv::FileNode outlinesList = fs["outlines"];
     cv::FileNodeIterator it = outlinesList.begin(), it_end = outlinesList.end();
