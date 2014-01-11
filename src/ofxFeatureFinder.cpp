@@ -46,7 +46,7 @@ void ofxFeatureFinder::findKeypoints(ofxCvGrayscaleImage _image) {
     extractor->compute(mat, imageKeypoints, imageDescriptors);
 }
 
-void ofxFeatureFinder::createObject() {
+ofxFeatureFinderObject ofxFeatureFinder::createObject() {
     
     std::vector<cv::KeyPoint> selectedKeypoints;
     cv::Mat selectedDescriptors;
@@ -80,34 +80,46 @@ void ofxFeatureFinder::createObject() {
     objects.push_back(object);
     
     cout << "added object with " << selectedKeypoints.size() << " keypoints." << endl;
-    
-    this->saveObject(object);
-    
+
     this->clearRegions();
     
+    return object;
 }
 
-void ofxFeatureFinder::saveObject(ofxFeatureFinderObject object) {
+void ofxFeatureFinder::createAndSaveObject(string filepath) {
+    ofxFeatureFinderObject object = createObject();
+    saveObject(object, filepath);
+}
 
-    ofFileDialogResult res = ofSystemSaveDialog("object.yml", "Save Object Description");
-
-    if (res.bSuccess) {
-        object.save(res.getPath());
-    }
+void ofxFeatureFinder::saveObject(ofxFeatureFinderObject object, string filepath) {
+    object.save(filepath);
 }
 
 
-void ofxFeatureFinder::loadObject() {
+void ofxFeatureFinder::loadObject(string filepath) {
+    ofLogNotice("loadObject() "+filepath);
 
-    ofFileDialogResult res = ofSystemLoadDialog("Load Object Description");
-    
-    if (res.bSuccess) {
-
-        ofxFeatureFinderObject object;
-        object.load(res.getPath());
+    ofxFeatureFinderObject object;
+    if (object.load(filepath)) {
         objects.push_back(object);
     }
 }
+
+
+void ofxFeatureFinder::loadObjectsInFolder(string folder) {
+
+    ofDirectory dir(folder);
+    dir.allowExt("yml");
+    dir.listDir();
+
+    for(int i = 0; i < dir.numFiles(); i++){
+        string fullPath = dir.getAbsolutePath() + "/" + dir.getName(i);
+        cout << "loading object description " << fullPath << endl;
+        loadObject(fullPath);
+    }
+
+}
+
 
 
 void ofxFeatureFinder::detectObjects() {

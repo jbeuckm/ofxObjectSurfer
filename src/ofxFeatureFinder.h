@@ -56,9 +56,12 @@ public:
     void drawRegions();
     void drawDetected();
     
-    void createObject();
-    void saveObject(ofxFeatureFinderObject object);
-    void loadObject();
+    ofxFeatureFinderObject createObject();
+    void saveObject(ofxFeatureFinderObject object, string filepath);
+    void createAndSaveObject(string filepath);
+
+    void loadObject(string filepath);
+    void loadObjectsInFolder(string folder);
     
     void clearRegions();
 
@@ -68,6 +71,7 @@ public:
     void mousePressed(ofMouseEventArgs &args);
     void mouseDragged(ofMouseEventArgs &args);
     void mouseReleased(ofMouseEventArgs &args);
+    
 
 };
 

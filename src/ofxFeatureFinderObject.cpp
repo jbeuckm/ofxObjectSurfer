@@ -20,13 +20,13 @@ ofxFeatureFinderObject::ofxFeatureFinderObject(std::vector<ofPolyline> _outlines
 }
 
 
-void ofxFeatureFinderObject::save(string filepath)
+bool ofxFeatureFinderObject::save(string filepath)
 {
     cv::FileStorage fs;
     fs.open(filepath, cv::FileStorage::WRITE);
     if (!fs.isOpened()) {
         cout << "ERROR OPENING FILE TO WRITE" << endl;
-        return;
+        return false;
     }
 
     cout << "now saving " << outlines.size() << " outlines..." << endl;
@@ -75,16 +75,17 @@ void ofxFeatureFinderObject::save(string filepath)
     fs.release();
     cout << "ofxFeatureFinderObject::save complete" << endl;
     
+    return true;
 }
 
 
-void ofxFeatureFinderObject::load(string filepath)
+bool ofxFeatureFinderObject::load(string filepath)
 {
     cv::FileStorage fs;
     fs.open(filepath, cv::FileStorage::READ);
     if (!fs.isOpened()) {
         cout << "ERROR OPENING FILE TO READ" << endl;
-        return;
+        return false;
     }
     
     cv::FileNode outlinesList = fs["outlines"];
@@ -134,6 +135,8 @@ void ofxFeatureFinderObject::load(string filepath)
 
     fs.release();
     cout << "ofxFeatureFinderObject::load complete" << endl;
+    
+    return true;
 }
 
 

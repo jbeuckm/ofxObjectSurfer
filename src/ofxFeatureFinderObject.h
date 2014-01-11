@@ -27,8 +27,8 @@ public:
     std::vector<cv::KeyPoint> keypoints;
     cv::Mat descriptors;
 
-    void save(string filepath);
-    void load(string filepath);
+    bool save(string filepath);
+    bool load(string filepath);
 
 };
 
