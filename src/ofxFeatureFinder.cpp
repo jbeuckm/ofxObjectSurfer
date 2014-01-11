@@ -13,7 +13,7 @@ ofxFeatureFinder::ofxFeatureFinder() {
     
     bDrawingRegion = false;
 
-    detector = new cv::SurfFeatureDetector(12800);
+    detector = new cv::SurfFeatureDetector(800);
     extractor = new cv::SurfDescriptorExtractor();
 }
 
