@@ -29,9 +29,6 @@ bool ofxFeatureFinderObject::save(string filepath)
         return false;
     }
 
-    ofFile f = ofFile(filepath);
-    label = f.getBaseName();
-
     cout << "now saving " << outlines.size() << " outlines..." << endl;
     
     fs << "outlines" << "[";
@@ -77,7 +74,10 @@ bool ofxFeatureFinderObject::save(string filepath)
 
     fs.release();
     cout << "ofxFeatureFinderObject::save complete" << endl;
-    
+
+    ofFile f = ofFile(filepath);
+    label = f.getBaseName();
+
     return true;
 }
 
