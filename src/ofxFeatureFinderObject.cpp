@@ -88,6 +88,8 @@ bool ofxFeatureFinderObject::load(string filepath)
         return false;
     }
     
+    label = filepath;
+    
     cv::FileNode outlinesList = fs["outlines"];
     cv::FileNodeIterator it = outlinesList.begin(), it_end = outlinesList.end();
     int idx = 0;

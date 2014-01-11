@@ -19,6 +19,7 @@
 class ofxFeatureFinderObject {
 
 public:
+    string label;
     
     ofxFeatureFinderObject();
     ofxFeatureFinderObject(std::vector<ofPolyline> _outlines, std::vector<cv::KeyPoint> _keypoints, cv::Mat _descriptors);

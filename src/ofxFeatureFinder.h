@@ -65,7 +65,7 @@ public:
     
     void clearRegions();
 
-    void detectObjects();
+    vector<string> detectObjects();
 
     void mouseMoved(ofMouseEventArgs &args);
     void mousePressed(ofMouseEventArgs &args);

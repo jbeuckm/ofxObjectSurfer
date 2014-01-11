@@ -13,7 +13,7 @@ ofxFeatureFinder::ofxFeatureFinder() {
     
     bDrawingRegion = false;
 
-    detector = new cv::SurfFeatureDetector();
+    detector = new cv::SurfFeatureDetector(12800);
     extractor = new cv::SurfDescriptorExtractor();
 }
 
@@ -122,22 +122,29 @@ void ofxFeatureFinder::loadObjectsInFolder(string folder) {
 
 
 
-void ofxFeatureFinder::detectObjects() {
+vector<string> ofxFeatureFinder::detectObjects() {
     
     detectedObjects.clear();
     detectedHomographies.clear();
+    
+    vector<string> foundObjectLabels;
 
     int i = 0;
     for(; i<objects.size(); i++){
+        
         ofxFeatureFinderObject object = objects.at(i);
         cv::Mat homography;
+
         if (this->detectObject(object, homography)) {
             cout << "detected object " << i << endl;
             detectedObjects.push_back(object);
             detectedHomographies.push_back(homography);
+
+            foundObjectLabels.push_back(object.label);
         }
     }
     
+    return foundObjectLabels;
 }
 
 bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homography) {
