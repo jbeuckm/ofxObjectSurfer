@@ -13,19 +13,22 @@ ofxFeatureFinder::ofxFeatureFinder() {
     
     bDrawingRegion = false;
 
-    detector = new cv::SurfFeatureDetector(800);
-    extractor = new cv::SurfDescriptorExtractor();
 }
 
 ofxFeatureFinder::~ofxFeatureFinder() {
-    delete detector;
-    delete extractor;
 }
 
-void ofxFeatureFinder::setFrame(int x, int y, int width, int height) {
+void ofxFeatureFinder::setDisplayRect(int x, int y, int width, int height) {
     
-    rect = ofRectangle(x, y, width, height);
+    displayRect = ofRectangle(x, y, width, height);
     
+}
+
+void ofxFeatureFinder::setCropRect(int x, int y, int width, int height) {
+    
+    cropRect = ofRectangle(x, y, width, height);
+
+    processImage.allocate(width, height);
 }
 
 
@@ -35,16 +38,29 @@ void ofxFeatureFinder::clearRegions() {
 }
 
 
-void ofxFeatureFinder::findKeypoints(ofxCvGrayscaleImage _image) {
+void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
     
-    image = _image;
+    rawImage = image;
+    rawImage.setROI(cropRect);
     
-    cv::Mat mat = cv::cvarrToMat(image.getCvImage());
+    processImage.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
     
-    detector->detect(mat, imageKeypoints);
-
-    extractor->compute(mat, imageKeypoints, imageDescriptors);
+    processImageMat = cv::cvarrToMat(processImage.getCvImage());
+    
 }
+
+
+void ofxFeatureFinder::findKeypoints() {
+    
+    detector = new cv::SurfFeatureDetector(hessianThreshold, octaves, octaveLayers);
+    detector->detect(processImageMat, imageKeypoints);
+    delete detector;
+
+    extractor = new cv::SurfDescriptorExtractor();
+    extractor->compute(processImageMat, imageKeypoints, imageDescriptors);
+    delete extractor;
+}
+
 
 ofxFeatureFinderObject ofxFeatureFinder::createObject() {
     
@@ -72,7 +88,7 @@ ofxFeatureFinderObject ofxFeatureFinder::createObject() {
         return;
     }
 
-    cv::Mat mat = cv::cvarrToMat(image.getCvImage());
+    cv::Mat mat = cv::cvarrToMat(processImage.getCvImage());
     
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
     
@@ -225,7 +241,9 @@ void ofxFeatureFinder::draw() {
 
 
 void ofxFeatureFinder::drawImage() {
-    image.draw(rect.x, rect.y, rect.width, rect.height);
+    rawImage.draw(displayRect.x, displayRect.y, rawImage.width, rawImage.height);
+    
+    processImage.draw(displayRect.x + cropRect.x, displayRect.y + cropRect.y, cropRect.width, cropRect.height);
 }
 
 
@@ -235,7 +253,7 @@ void ofxFeatureFinder::drawDetected() {
     ofSetColor(0, 0, 255);
 
     ofPushMatrix();
-    ofTranslate(rect.x, rect.y);
+    ofTranslate(displayRect.x, displayRect.y);
 
     for(int i=0; i < detectedObjects.size(); i++){
         
@@ -270,7 +288,7 @@ void ofxFeatureFinder::drawRegions() {
     vector<ofPolyline>::iterator it = regions.begin();
     
     ofPushMatrix();
-    ofTranslate(rect.x, rect.y);
+    ofTranslate(displayRect.x, displayRect.y);
     for(; it != regions.end(); ++it){
         
         (*it).draw();
@@ -286,13 +304,13 @@ void ofxFeatureFinder::drawFeatures() {
     ofEnableAlphaBlending();
     ofFill();
     
-    float cx = (float)rect.width / (float)image.width;
-    float cy = (float)rect.height / (float)image.height;
+//    float cx = (float)displayRect.width / (float)processImage.width;
+//    float cy = (float)displayRect.height / (float)processImage.height;
     
     
     ofPushMatrix();
-    ofTranslate(rect.x, rect.y);
-    ofScale(cx, cy);
+    ofTranslate(displayRect.x, displayRect.y);
+//    ofScale(cx, cy);
     
     vector<ofPolyline>::iterator it;
     int i;
@@ -327,14 +345,14 @@ void ofxFeatureFinder::mouseMoved(ofMouseEventArgs &args){
 }
 void ofxFeatureFinder::mousePressed(ofMouseEventArgs &args){
     
-    if (!rect.inside(args.x, args.y)) {
+    if (!displayRect.inside(args.x, args.y)) {
         return;
     }
     
     bDrawingRegion = true;
     
     ofPolyline line = ofPolyline();
-    line.addVertex(ofVec2f(args.x - rect.x, args.y - rect.y));
+    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
     regions.push_back(line);
 }
 void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
@@ -342,7 +360,7 @@ void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x - rect.x, args.y - rect.y));
+    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
     regions.pop_back();
     regions.push_back(line);
 }
@@ -351,7 +369,7 @@ void ofxFeatureFinder::mouseReleased(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x - rect.x, args.y - rect.y));
+    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
     line.close();
     regions.pop_back();
     regions.push_back(line);

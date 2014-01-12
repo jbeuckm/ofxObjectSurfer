@@ -25,8 +25,13 @@ private:
     cv::DescriptorExtractor * extractor;
 
     
-    ofRectangle rect;
-    ofxCvGrayscaleImage image;
+    ofRectangle displayRect;
+    ofRectangle cropRect;
+
+	ofxCvColorImage rawImage;
+
+    ofxCvGrayscaleImage processImage;
+    cv::Mat processImageMat;
     
     std::vector<ofPolyline> regions;
     bool bDrawingRegion;
@@ -39,6 +44,13 @@ private:
     std::vector<cv::Mat> detectedHomographies;
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
+    
+    double 	hessianThreshold = 400;
+    int 	octaves = 3;
+    int 	octaveLayers = 4;
+
+    bool bBlur;
+    int blurLevel;
 
 public:
     ofxFeatureFinder();
@@ -46,15 +58,20 @@ public:
 
     CvSeq *getImageKeypoints();
     
-    void setFrame(int x, int y, int width, int height);
+    void setDisplayRect(int x, int y, int width, int height);
+    void setCropRect(int x, int y, int width, int height);
     
-    void findKeypoints(ofxCvGrayscaleImage _image);
+    void updateSourceImage(ofxCvColorImage image);
+    
+    void findKeypoints();
     
     void draw();
     void drawImage();
     void drawFeatures();
     void drawRegions();
     void drawDetected();
+    
+    void setBlurLevel(int _blurLevel);
     
     ofxFeatureFinderObject createObject();
     void saveObject(ofxFeatureFinderObject object, string filepath);
