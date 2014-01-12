@@ -29,6 +29,7 @@ private:
     ofRectangle cropRect;
 
 	ofxCvColorImage rawImage;
+    ofxCvColorImage colorCropped;
 
     ofxCvGrayscaleImage processImage;
     cv::Mat processImageMat;

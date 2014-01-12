@@ -35,6 +35,7 @@ void ofxFeatureFinder::setCropRect(int x, int y, int width, int height) {
     cropRect = ofRectangle(x, y, width, height);
 
     processImage.allocate(width, height);
+    colorCropped.allocate(width, height);
 }
 
 
@@ -45,7 +46,7 @@ void ofxFeatureFinder::clearRegions() {
 
 
 void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
-    
+
     if ((rawImage.width != image.width) || (rawImage.height != image.height)) {
         rawImage.allocate(image.width, image.height);
     }
@@ -53,8 +54,9 @@ void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
     rawImage.setFromPixels(image.getPixels(), image.width, image.height);
     rawImage.setROI(cropRect);
     
-    return;
-    processImage.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
+    colorCropped.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
+
+    processImage = colorCropped;
     
     processImageMat = cv::cvarrToMat(processImage.getCvImage());
     
@@ -277,6 +279,7 @@ void ofxFeatureFinder::drawDetected() {
         cv::Mat H = detectedHomographies.at(i);
         
         ofPushMatrix();
+        
         ofMatrix4x4 transform = ofMatrix4x4(
                                             H.at<double>(0,0), H.at<double>(1,0), 0, H.at<double>(2,0),
                                             H.at<double>(0,1), H.at<double>(1,1), 0, H.at<double>(2,1),
