@@ -13,6 +13,12 @@ ofxFeatureFinder::ofxFeatureFinder() {
     
     bDrawingRegion = false;
 
+    hessianThreshold = 800;
+    octaves = 3;
+    octaveLayers = 4;
+
+    bBlur = true;
+    blurLevel = 3;
 }
 
 ofxFeatureFinder::~ofxFeatureFinder() {
@@ -40,9 +46,14 @@ void ofxFeatureFinder::clearRegions() {
 
 void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
     
-    rawImage = image;
+    if ((rawImage.width != image.width) || (rawImage.height != image.height)) {
+        rawImage.allocate(image.width, image.height);
+    }
+    
+    rawImage.setFromPixels(image.getPixels(), image.width, image.height);
     rawImage.setROI(cropRect);
     
+    return;
     processImage.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
     
     processImageMat = cv::cvarrToMat(processImage.getCvImage());
@@ -231,19 +242,25 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
 
 
 void ofxFeatureFinder::draw() {
+
+    ofPushMatrix();
+    ofTranslate(displayRect.x, displayRect.y);
+
     this->drawImage();
     
     this->drawFeatures();
     this->drawRegions();
     
     this->drawDetected();
+    
+    ofPopMatrix();
 }
 
 
 void ofxFeatureFinder::drawImage() {
-    rawImage.draw(displayRect.x, displayRect.y, rawImage.width, rawImage.height);
+    rawImage.draw(0, 0, rawImage.width, rawImage.height);
     
-    processImage.draw(displayRect.x + cropRect.x, displayRect.y + cropRect.y, cropRect.width, cropRect.height);
+    processImage.draw(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
 }
 
 
@@ -252,8 +269,6 @@ void ofxFeatureFinder::drawDetected() {
     
     ofSetColor(0, 0, 255);
 
-    ofPushMatrix();
-    ofTranslate(displayRect.x, displayRect.y);
 
     for(int i=0; i < detectedObjects.size(); i++){
         
@@ -278,7 +293,6 @@ void ofxFeatureFinder::drawDetected() {
         ofPopMatrix();
     }
     
-    ofPopMatrix();
 }
 
 void ofxFeatureFinder::drawRegions() {
@@ -287,14 +301,11 @@ void ofxFeatureFinder::drawRegions() {
     
     vector<ofPolyline>::iterator it = regions.begin();
     
-    ofPushMatrix();
-    ofTranslate(displayRect.x, displayRect.y);
     for(; it != regions.end(); ++it){
         
         (*it).draw();
         
     }
-    ofPopMatrix();
 }
 
 
@@ -308,8 +319,6 @@ void ofxFeatureFinder::drawFeatures() {
 //    float cy = (float)displayRect.height / (float)processImage.height;
     
     
-    ofPushMatrix();
-    ofTranslate(displayRect.x, displayRect.y);
 //    ofScale(cx, cy);
     
     vector<ofPolyline>::iterator it;
@@ -330,8 +339,6 @@ void ofxFeatureFinder::drawFeatures() {
 
         ofCircle(cvRound(r.pt.x), cvRound(r.pt.y), 2);
     }
-    
-    ofPopMatrix();
 
     ofDisableAlphaBlending();
 }

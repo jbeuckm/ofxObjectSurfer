@@ -45,9 +45,9 @@ private:
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
     
-    double 	hessianThreshold = 400;
-    int 	octaves = 3;
-    int 	octaveLayers = 4;
+    double 	hessianThreshold;
+    int 	octaves;
+    int 	octaveLayers;
 
     bool bBlur;
     int blurLevel;
