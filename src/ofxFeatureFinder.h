@@ -67,7 +67,7 @@ public:
     void findKeypoints();
     
     void draw();
-    void drawImage();
+
     void drawFeatures();
     void drawRegions();
     void drawDetected();

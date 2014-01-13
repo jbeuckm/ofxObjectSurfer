@@ -55,6 +55,8 @@ void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
     rawImage.setROI(cropRect);
     
     colorCropped.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
+    
+    rawImage.setROI(0, 0, rawImage.width, rawImage.height);
 
     processImage = colorCropped;
     
@@ -248,7 +250,13 @@ void ofxFeatureFinder::draw() {
     ofPushMatrix();
     ofTranslate(displayRect.x, displayRect.y);
 
-    this->drawImage();
+    rawImage.draw(0, 0, rawImage.width, rawImage.height);
+    
+
+    ofPushMatrix();
+    ofTranslate(cropRect.x, cropRect.y);
+
+    processImage.draw(0, 0, cropRect.width, cropRect.height);
     
     this->drawFeatures();
     this->drawRegions();
@@ -256,13 +264,8 @@ void ofxFeatureFinder::draw() {
     this->drawDetected();
     
     ofPopMatrix();
-}
 
-
-void ofxFeatureFinder::drawImage() {
-    rawImage.draw(0, 0, rawImage.width, rawImage.height);
-    
-    processImage.draw(cropRect.x, cropRect.y, cropRect.width, cropRect.height);
+    ofPopMatrix();
 }
 
 
@@ -270,6 +273,9 @@ void ofxFeatureFinder::drawDetected() {
     vector<ofxFeatureFinderObject>::iterator it = detectedObjects.begin();
     
     ofSetColor(0, 0, 255);
+
+    ofPushMatrix();
+    ofTranslate(cropRect.x, cropRect.y);
 
 
     for(int i=0; i < detectedObjects.size(); i++){
@@ -296,7 +302,9 @@ void ofxFeatureFinder::drawDetected() {
         ofPopMatrix();
     }
     
+    ofPopMatrix();
 }
+
 
 void ofxFeatureFinder::drawRegions() {
     
