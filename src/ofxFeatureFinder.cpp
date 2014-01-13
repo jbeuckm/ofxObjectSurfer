@@ -101,7 +101,9 @@ ofxFeatureFinderObject ofxFeatureFinder::createObject() {
 
     cv::Mat mat = cv::cvarrToMat(processImage.getCvImage());
     
+    extractor = new cv::SurfDescriptorExtractor();
     extractor->compute(mat, selectedKeypoints, selectedDescriptors);
+    delete extractor;
     
     ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
     objects.push_back(object);
@@ -270,10 +272,6 @@ void ofxFeatureFinder::drawDetected() {
     
     ofSetColor(0, 0, 255);
 
-    ofPushMatrix();
-    ofTranslate(cropRect.x, cropRect.y);
-
-
     for(int i=0; i < detectedObjects.size(); i++){
         
         ofxFeatureFinderObject object = detectedObjects.at(i);
@@ -298,7 +296,6 @@ void ofxFeatureFinder::drawDetected() {
         ofPopMatrix();
     }
     
-    ofPopMatrix();
 }
 
 
