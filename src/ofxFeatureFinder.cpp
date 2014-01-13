@@ -35,7 +35,7 @@ void ofxFeatureFinder::setCropRect(int x, int y, int width, int height) {
     cropRect = ofRectangle(x, y, width, height);
 
     processImage.allocate(width, height);
-    colorCropped.allocate(width, height);
+    rawImageCropped.allocate(width, height);
 }
 
 
@@ -47,18 +47,14 @@ void ofxFeatureFinder::clearRegions() {
 
 void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
 
-    if ((rawImage.width != image.width) || (rawImage.height != image.height)) {
-        rawImage.allocate(image.width, image.height);
-    }
-    
-    rawImage.setFromPixels(image.getPixels(), image.width, image.height);
+    rawImage = image;
     rawImage.setROI(cropRect);
     
-    colorCropped.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
+    rawImageCropped.setFromPixels(rawImage.getRoiPixels(), cropRect.width, cropRect.height);
     
     rawImage.setROI(0, 0, rawImage.width, rawImage.height);
 
-    processImage = colorCropped;
+    processImage = rawImageCropped;
     
     processImageMat = cv::cvarrToMat(processImage.getCvImage());
     
@@ -326,12 +322,6 @@ void ofxFeatureFinder::drawFeatures() {
     ofEnableAlphaBlending();
     ofFill();
     
-//    float cx = (float)displayRect.width / (float)processImage.width;
-//    float cy = (float)displayRect.height / (float)processImage.height;
-    
-    
-//    ofScale(cx, cy);
-    
     vector<ofPolyline>::iterator it;
     int i;
     //draw the keypoints on the captured frame
@@ -370,7 +360,7 @@ void ofxFeatureFinder::mousePressed(ofMouseEventArgs &args){
     bDrawingRegion = true;
     
     ofPolyline line = ofPolyline();
-    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
     regions.push_back(line);
 }
 void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
@@ -378,7 +368,7 @@ void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
     regions.pop_back();
     regions.push_back(line);
 }
@@ -387,7 +377,7 @@ void ofxFeatureFinder::mouseReleased(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x -displayRect.x, args.y -displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
     line.close();
     regions.pop_back();
     regions.push_back(line);

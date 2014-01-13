@@ -28,8 +28,8 @@ private:
     ofRectangle displayRect;
     ofRectangle cropRect;
 
-	ofxCvColorImage rawImage;
-    ofxCvColorImage colorCropped;
+    ofxCvColorImage rawImage;
+    ofxCvColorImage rawImageCropped;
 
     ofxCvGrayscaleImage processImage;
     cv::Mat processImageMat;
