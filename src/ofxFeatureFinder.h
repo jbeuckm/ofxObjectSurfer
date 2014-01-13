@@ -72,6 +72,7 @@ public:
     void drawRegions();
     void drawDetected();
     
+    void toggleBlur(bool _blur);
     void setBlurLevel(int _blurLevel);
     void setHessianThreshold(double _hessian);
 

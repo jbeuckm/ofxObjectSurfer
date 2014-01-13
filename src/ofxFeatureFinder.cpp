@@ -22,6 +22,10 @@ ofxFeatureFinder::ofxFeatureFinder() {
 }
 
 
+void ofxFeatureFinder::toggleBlur(bool _blur) {
+    bBlur = _blur;
+}
+
 void ofxFeatureFinder::setBlurLevel(int _blurLevel) {
     blurLevel = _blurLevel;
 }
