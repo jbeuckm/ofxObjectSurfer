@@ -119,10 +119,8 @@ ofxFeatureFinderObject ofxFeatureFinder::createObject() {
         return;
     }
 
-    cv::Mat mat = cv::cvarrToMat(processImage.getCvImage());
-    
     extractor = new cv::SurfDescriptorExtractor();
-    extractor->compute(mat, selectedKeypoints, selectedDescriptors);
+    extractor->compute(processImageMat, selectedKeypoints, selectedDescriptors);
     delete extractor;
     
     ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
