@@ -21,6 +21,16 @@ ofxFeatureFinder::ofxFeatureFinder() {
     blurLevel = 3;
 }
 
+
+void ofxFeatureFinder::setBlurLevel(int _blurLevel) {
+    blurLevel = _blurLevel;
+}
+
+void ofxFeatureFinder::setHessianThreshold(double _hessian) {
+    hessianThreshold = _hessian;
+}
+
+
 ofxFeatureFinder::~ofxFeatureFinder() {
 }
 
@@ -56,9 +66,16 @@ void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
 
     processImage = rawImageCropped;
     
+    processImage.contrastStretch();
+    
+    if (bBlur) {
+        processImage.blurGaussian(blurLevel);
+    }
+    
     processImageMat = cv::cvarrToMat(processImage.getCvImage());
     
 }
+
 
 
 void ofxFeatureFinder::findKeypoints() {

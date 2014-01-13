@@ -73,6 +73,8 @@ public:
     void drawDetected();
     
     void setBlurLevel(int _blurLevel);
+    void setHessianThreshold(double _hessian);
+
     
     ofxFeatureFinderObject createObject();
     void saveObject(ofxFeatureFinderObject object, string filepath);
@@ -89,7 +91,7 @@ public:
     void mousePressed(ofMouseEventArgs &args);
     void mouseDragged(ofMouseEventArgs &args);
     void mouseReleased(ofMouseEventArgs &args);
-
+    
 };
 
 #endif /* defined(OFXFEATUREFINDER) */
