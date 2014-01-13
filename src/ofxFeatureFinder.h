@@ -63,6 +63,7 @@ public:
     void setCropRect(int x, int y, int width, int height);
     
     void updateSourceImage(ofxCvColorImage image);
+    void updateSourceImage(ofxCvGrayscaleImage image);
     
     void findKeypoints();
     

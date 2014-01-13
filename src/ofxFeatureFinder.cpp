@@ -59,6 +59,9 @@ void ofxFeatureFinder::clearRegions() {
 }
 
 
+void ofxFeatureFinder::updateSourceImage(ofxCvGrayscaleImage image) {
+    updateSourceImage(image);
+}
 void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
 
     rawImage = image;
@@ -242,7 +245,7 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
         homography = findHomography(mpts_1, mpts_2, cv::RANSAC, 1.0, outlier_mask);
 
         uint inliers=0, outliers=0;
-        for(unsigned int k=0; k<mpts_1.size();++k)
+        for(unsigned int k=0; k<mpts_1.size(); ++k)
         {
             if(outlier_mask.at(k))
             {
@@ -291,30 +294,37 @@ void ofxFeatureFinder::draw() {
 void ofxFeatureFinder::drawDetected() {
     vector<ofxFeatureFinderObject>::iterator it = detectedObjects.begin();
     
-    ofSetColor(0, 0, 255);
-
     for(int i=0; i < detectedObjects.size(); i++){
         
         ofxFeatureFinderObject object = detectedObjects.at(i);
         
         cv::Mat H = detectedHomographies.at(i);
         
-        ofPushMatrix();
-        
-        ofMatrix4x4 transform = ofMatrix4x4(
-                                            H.at<double>(0,0), H.at<double>(1,0), 0, H.at<double>(2,0),
-                                            H.at<double>(0,1), H.at<double>(1,1), 0, H.at<double>(2,1),
-                                            0, 0, 1, 0,
-                                            H.at<double>(0,2), H.at<double>(1,2), 0, H.at<double>(2,2)
-        );
 
-        ofMultMatrix(transform);
-        vector<ofPolyline>::iterator line = object.outlines.begin();
-        for(; line != object.outlines.end(); ++line){
-            (*line).draw();
-        }
+        ofSetColor(0, 255, 255);
         
-        ofPopMatrix();
+        vector<ofPolyline>::iterator outline = object.outlines.begin();
+        for(; outline != object.outlines.end(); ++outline){
+
+            vector<cv::Point2f> objectPoints((*outline).size());
+            vector<cv::Point2f> scenePoints((*outline).size());
+        
+            for (int i=0, l=(*outline).size(); i<l; i++) {
+                ofPoint p = (*outline)[i];
+                objectPoints[i] = cv::Point2f(p.x, p.y);
+            }
+
+            perspectiveTransform( objectPoints, scenePoints, H);
+
+            ofPolyline sceneOutlines;
+            for (int i=0, l=(*outline).size(); i<l; i++) {
+                cv::Point2f p = scenePoints[i];
+                sceneOutlines.addVertex(p.x, p.y);
+            }
+            sceneOutlines.close();
+            sceneOutlines.draw();
+        }
+
     }
     
 }
