@@ -89,7 +89,6 @@ public:
     void mousePressed(ofMouseEventArgs &args);
     void mouseDragged(ofMouseEventArgs &args);
     void mouseReleased(ofMouseEventArgs &args);
-    
 
 };
 

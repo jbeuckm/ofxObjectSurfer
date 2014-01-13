@@ -360,7 +360,7 @@ void ofxFeatureFinder::mousePressed(ofMouseEventArgs &args){
     bDrawingRegion = true;
     
     ofPolyline line = ofPolyline();
-    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x - cropRect.x, args.y - displayRect.y - cropRect.y));
     regions.push_back(line);
 }
 void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
@@ -368,7 +368,7 @@ void ofxFeatureFinder::mouseDragged(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x - cropRect.x, args.y - displayRect.y - cropRect.y));
     regions.pop_back();
     regions.push_back(line);
 }
@@ -377,7 +377,7 @@ void ofxFeatureFinder::mouseReleased(ofMouseEventArgs &args){
     if (!bDrawingRegion) return;
     
     ofPolyline line = regions.back();
-    line.addVertex(ofVec2f(args.x - displayRect.x, args.y - displayRect.y));
+    line.addVertex(ofVec2f(args.x - displayRect.x - cropRect.x, args.y - displayRect.y - cropRect.y));
     line.close();
     regions.pop_back();
     regions.push_back(line);
