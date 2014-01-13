@@ -46,17 +46,23 @@ private:
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
     
-    double 	hessianThreshold;
-    int 	octaves;
-    int 	octaveLayers;
-
-    bool bBlur;
-    int blurLevel;
 
 public:
     ofxFeatureFinder();
     ~ofxFeatureFinder();
 
+    double 	hessianThreshold;
+    int 	octaves;
+    int 	octaveLayers;
+    
+    bool bBlur;
+    int blurLevel;
+    
+    bool bEqualizeHistogram;
+    
+    int minMatchCount;
+
+    
     CvSeq *getImageKeypoints();
     
     void setDisplayRect(int x, int y, int width, int height);

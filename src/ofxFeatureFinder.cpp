@@ -19,20 +19,10 @@ ofxFeatureFinder::ofxFeatureFinder() {
 
     bBlur = true;
     blurLevel = 3;
+    
+    minMatchCount = 8;
 }
 
-
-void ofxFeatureFinder::toggleBlur(bool _blur) {
-    bBlur = _blur;
-}
-
-void ofxFeatureFinder::setBlurLevel(int _blurLevel) {
-    blurLevel = _blurLevel;
-}
-
-void ofxFeatureFinder::setHessianThreshold(double _hessian) {
-    hessianThreshold = _hessian;
-}
 
 
 ofxFeatureFinder::~ofxFeatureFinder() {
@@ -79,8 +69,14 @@ void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
         processImage.blurGaussian(blurLevel);
     }
     
-    processImageMat = cv::cvarrToMat(processImage.getCvImage());
-    
+    if (bEqualizeHistogram) {
+        cv::Mat source = cv::cvarrToMat(processImage.getCvImage());
+        
+        equalizeHist( source, processImageMat );
+    }
+    else {
+        processImageMat = cv::cvarrToMat(processImage.getCvImage());
+    }
 }
 
 
@@ -238,9 +234,8 @@ bool ofxFeatureFinder::detectObject(ofxFeatureFinderObject object, cv::Mat &homo
     }
     
     // FIND HOMOGRAPHY
-    int nbMatches = 8;
 
-    if(mpts_1.size() >= nbMatches)
+    if(mpts_1.size() >= minMatchCount)
     {
         homography = findHomography(mpts_1, mpts_2, cv::RANSAC, 1.0, outlier_mask);
 
