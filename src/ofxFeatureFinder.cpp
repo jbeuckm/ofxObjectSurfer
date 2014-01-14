@@ -12,7 +12,10 @@ ofxFeatureFinder::ofxFeatureFinder() {
     ofRegisterMouseEvents(this);
     
     bDrawingRegion = false;
-
+    
+    bStretchContrast = true;
+    bEqualizeHistogram = true;
+    
     hessianThreshold = 800;
     octaves = 3;
     octaveLayers = 4;
@@ -22,13 +25,15 @@ ofxFeatureFinder::ofxFeatureFinder() {
     
     minMatchCount = 8;
     
+    bDrawCircles = false;
+    
     palette.push_back(ofColor(127, 127, 127));
     palette.push_back(ofColor(0, 0, 255));
     palette.push_back(ofColor(0, 255, 0));
     palette.push_back(ofColor(255, 255, 0));
     palette.push_back(ofColor(255, 127, 0));
     palette.push_back(ofColor(255, 0, 0));
-    palette.push_back(ofColor(255, 0, 127));
+    palette.push_back(ofColor(255, 255, 255));
 }
 
 
@@ -71,22 +76,34 @@ void ofxFeatureFinder::updateSourceImage(ofxCvColorImage image) {
 
     processImage = rawImageCropped;
     
-    processImage.contrastStretch();
-    
-    if (bBlur) {
-        processImage.blurGaussian(blurLevel);
+    if (bStretchContrast) {
+        processImage.contrastStretch();
     }
-    
+
+    processImageMat = cv::cvarrToMat(processImage.getCvImage());
+
     if (bEqualizeHistogram) {
-        cv::Mat source = cv::cvarrToMat(processImage.getCvImage());
-        
-        equalizeHist( source, processImageMat );
+        cv::Mat temp;
+        equalizeHist( processImageMat, temp );
+        processImageMat = temp;
     }
-    else {
-        processImageMat = cv::cvarrToMat(processImage.getCvImage());
+
+    if (bBlur) {
+        cv::Mat temp;
+        cv::GaussianBlur(processImageMat, temp, cv::Size(blurLevel, blurLevel), 0);
+        processImageMat = temp;
     }
+    
+    processImage.setFromPixels(processImageMat.data, processImage.width, processImage.height);
 }
 
+
+void ofxFeatureFinder::setBlurLevel(unsigned int level) {
+    if (level % 2 != 1) {
+        level += 1;
+    }
+    blurLevel = level;
+}
 
 
 void ofxFeatureFinder::findKeypoints() {
@@ -274,7 +291,7 @@ void ofxFeatureFinder::draw() {
     ofTranslate(displayRect.x, displayRect.y);
 
     rawImage.draw(0, 0, rawImage.width, rawImage.height);
-    
+    this->drawLegend();
 
     ofPushMatrix();
     ofTranslate(cropRect.x, cropRect.y);
@@ -292,6 +309,18 @@ void ofxFeatureFinder::draw() {
 }
 
 
+void ofxFeatureFinder::drawLegend() {
+    float yDiv = displayRect.height / 7.0;
+    
+    ofFill();
+    for (int i=0; i<7; i++) {
+        ofSetColor(palette.at(6-i));
+        ofRect(displayRect.width - 10, i*yDiv, 0, 10, yDiv);
+    }
+    ofNoFill();
+}
+
+
 void ofxFeatureFinder::drawDetected() {
     vector<ofxFeatureFinderObject>::iterator it = detectedObjects.begin();
     
@@ -301,7 +330,7 @@ void ofxFeatureFinder::drawDetected() {
         
         cv::Mat H = detectedHomographies.at(i);
         
-        ofSetLineWidth(3);
+        ofSetLineWidth(2);
         ofSetColor(0, 255, 255);
         
         vector<ofPolyline>::iterator outline = object.outlines.begin();
@@ -389,10 +418,14 @@ void ofxFeatureFinder::drawFeatures() {
             }
         }
         
-        float radius = r.size/2.0;
-
-        ofCircle(r.pt.x, r.pt.y, radius);
-        ofLine(r.pt.x, r.pt.y, r.pt.x + radius*cos(r.angle), r.pt.y + radius*sin(r.angle));
+        if (bDrawCircles) {
+            float radius = r.size/2.0;
+            
+            ofCircle(r.pt.x, r.pt.y, radius);
+            ofLine(r.pt.x, r.pt.y, r.pt.x + radius*cos(r.angle), r.pt.y + radius*sin(r.angle));
+        }
+        
+        ofCircle(r.pt.x, r.pt.y, 1.5);
         
     }
 
@@ -440,3 +473,25 @@ void ofxFeatureFinder::mouseReleased(ofMouseEventArgs &args){
     bDrawingRegion = false;
 }
 
+
+
+void ofxFeatureFinder::colorReduce(cv::Mat &image, int div) {
+    
+    int nl= image.rows; // number of lines
+    int nc= image.cols * image.channels(); // total number of elements per line
+    
+    for (int j=0; j<nl; j++) {
+        
+        uchar* data= image.ptr<uchar>(j);
+        
+        for (int i=0; i<nc; i++) {
+            
+            // process each pixel ---------------------
+            
+            data[i]= data[i]/div*div + div/2;
+            
+            // end of pixel processing ----------------
+            
+        } // end of line
+    }
+}

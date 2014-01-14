@@ -75,8 +75,9 @@ bool ofxFeatureFinderObject::save(string filepath)
     fs.release();
     cout << "ofxFeatureFinderObject::save complete" << endl;
 
-    ofFile f = ofFile(filepath);
-    label = f.getBaseName();
+
+    label = filepath;
+    cout << "changed object label to " << filepath << endl;
 
     return true;
 }

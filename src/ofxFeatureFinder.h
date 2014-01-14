@@ -48,6 +48,7 @@ private:
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
     
+    int blurLevel;
 
 public:
     ofxFeatureFinder();
@@ -57,13 +58,15 @@ public:
     int octaves;
     int octaveLayers;
     
-    bool bBlur;
-    int blurLevel;
-    
+    bool bStretchContrast;
     bool bEqualizeHistogram;
     
+    bool bBlur;
+    void setBlurLevel(unsigned int level);
+    
+    
     int minMatchCount;
-
+    bool bDrawCircles;
     
     CvSeq *getImageKeypoints();
     
@@ -76,13 +79,12 @@ public:
     void findKeypoints();
     
     void draw();
-
+    void drawLegend();
     void drawFeatures();
     void drawRegions();
     void drawDetected();
     
     void toggleBlur(bool _blur);
-    void setBlurLevel(int _blurLevel);
     void setHessianThreshold(double _hessian);
 
     
@@ -101,7 +103,9 @@ public:
     void mousePressed(ofMouseEventArgs &args);
     void mouseDragged(ofMouseEventArgs &args);
     void mouseReleased(ofMouseEventArgs &args);
-    
+
+    void colorReduce(cv::Mat &image, int div=64);
+
 };
 
 #endif /* defined(OFXFEATUREFINDER) */
