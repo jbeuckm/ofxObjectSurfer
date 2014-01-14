@@ -36,13 +36,15 @@ private:
     
     std::vector<ofPolyline> regions;
     bool bDrawingRegion;
-
+    
     std::vector<cv::KeyPoint> imageKeypoints;
     cv::Mat imageDescriptors;
     
     std::vector<ofxFeatureFinderObject> objects;
     std::vector<ofxFeatureFinderObject> detectedObjects;
     std::vector<cv::Mat> detectedHomographies;
+    
+    std::vector<ofColor> palette;
     
     bool detectObject(ofxFeatureFinderObject object, cv::Mat &homography);
     
@@ -51,9 +53,9 @@ public:
     ofxFeatureFinder();
     ~ofxFeatureFinder();
 
-    double 	hessianThreshold;
-    int 	octaves;
-    int 	octaveLayers;
+    double hessianThreshold;
+    int octaves;
+    int octaveLayers;
     
     bool bBlur;
     int blurLevel;

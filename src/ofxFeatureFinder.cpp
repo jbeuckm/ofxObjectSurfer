@@ -17,10 +17,18 @@ ofxFeatureFinder::ofxFeatureFinder() {
     octaves = 3;
     octaveLayers = 4;
 
-    bBlur = true;
+    bBlur = false;
     blurLevel = 3;
     
     minMatchCount = 8;
+    
+    palette.push_back(ofColor(127, 127, 127));
+    palette.push_back(ofColor(0, 0, 255));
+    palette.push_back(ofColor(0, 255, 0));
+    palette.push_back(ofColor(255, 255, 0));
+    palette.push_back(ofColor(255, 127, 0));
+    palette.push_back(ofColor(255, 0, 0));
+    palette.push_back(ofColor(255, 0, 127));
 }
 
 
@@ -341,16 +349,37 @@ void ofxFeatureFinder::drawFeatures() {
     if (!imageKeypoints.size()) return;
     
     ofEnableAlphaBlending();
-    ofFill();
+    ofNoFill();
     
     vector<ofPolyline>::iterator it;
-    int i;
-    //draw the keypoints on the captured frame
-    for(i = 0; i < imageKeypoints.size(); i++ )
+    
+    float minResponse = FLT_MAX;
+    float maxResponse = 0.0;
+
+    for(int i = 0; i < imageKeypoints.size(); i++ )
     {
         cv::KeyPoint r = imageKeypoints.at(i);
         
-        ofSetColor(255, 255, 0, 127);
+        if (r.response > maxResponse) {
+            maxResponse = r.response;
+        }
+        else if (r.response < minResponse) {
+            minResponse = r.response;
+        }
+    }
+    
+    float responseRange = maxResponse - minResponse;
+    
+    for(int i = 0; i < imageKeypoints.size(); i++ )
+    {
+        cv::KeyPoint r = imageKeypoints.at(i);
+        
+        float responseRank = (r.response - minResponse) / responseRange;
+        
+        int colorIndex = floor(responseRank * 7.0);
+        if (colorIndex > 6) colorIndex = 6;
+        else if (colorIndex < 0) colorIndex = 0;
+        ofSetColor(palette.at(colorIndex));
 
         for(it = regions.begin(); it != regions.end(); ++it){
             if ((*it).inside(r.pt.x, r.pt.y)) {
@@ -358,8 +387,12 @@ void ofxFeatureFinder::drawFeatures() {
                 break;
             }
         }
+        
+        float radius = r.size/2.0;
 
-        ofCircle(cvRound(r.pt.x), cvRound(r.pt.y), 2);
+        ofCircle(r.pt.x, r.pt.y, radius);
+        ofLine(r.pt.x, r.pt.y, r.pt.x + radius*cos(r.angle), r.pt.y + radius*sin(r.angle));
+        
     }
 
     ofDisableAlphaBlending();
