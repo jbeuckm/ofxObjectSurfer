@@ -149,6 +149,7 @@ ofxFeatureFinderObject ofxFeatureFinder::createObject() {
     delete extractor;
     
     ofxFeatureFinderObject object = ofxFeatureFinderObject(regions, selectedKeypoints, selectedDescriptors);
+    object.label = "new object " + static_cast<ostringstream*>( &(ostringstream() << objects.size()) )->str();
     objects.push_back(object);
     
     cout << "added object with " << selectedKeypoints.size() << " keypoints." << endl;
@@ -377,7 +378,7 @@ void ofxFeatureFinder::drawRegions() {
 void ofxFeatureFinder::drawFeatures() {
     if (!imageKeypoints.size()) return;
     
-    ofSetLineWidth(.5);
+    ofSetLineWidth(.1);
     ofEnableAlphaBlending();
     ofNoFill();
     
