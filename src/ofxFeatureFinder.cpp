@@ -301,7 +301,7 @@ void ofxFeatureFinder::drawDetected() {
         
         cv::Mat H = detectedHomographies.at(i);
         
-
+        ofSetLineWidth(3);
         ofSetColor(0, 255, 255);
         
         vector<ofPolyline>::iterator outline = object.outlines.begin();
@@ -348,6 +348,7 @@ void ofxFeatureFinder::drawRegions() {
 void ofxFeatureFinder::drawFeatures() {
     if (!imageKeypoints.size()) return;
     
+    ofSetLineWidth(.5);
     ofEnableAlphaBlending();
     ofNoFill();
     
