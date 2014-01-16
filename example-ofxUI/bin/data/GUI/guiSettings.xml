@@ -1,0 +1,55 @@
+<Widget>
+    <Kind>2</Kind>
+    <Name>FULLSCREEN</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>STRETCH CONTRAST</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>EQUALIZE HISTOGRAM</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>BLUR</Name>
+    <Value>0</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>BLUR LEVEL</Name>
+    <Value>8.526315689</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>DRAW CIRCLES</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>DETECT OBJECTS</Name>
+    <Value>1</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>MIN HESSIAN</Name>
+    <Value>7237.479980469</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>OCTAVES</Name>
+    <Value>5.605263233</Value>
+</Widget>
+<Widget>
+    <Kind>4</Kind>
+    <Name>MIN MATCHES</Name>
+    <Value>8.105262756</Value>
+</Widget>
+<Widget>
+    <Kind>2</Kind>
+    <Name>PAUSE</Name>
+    <Value>0</Value>
+</Widget>
