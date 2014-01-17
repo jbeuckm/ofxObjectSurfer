@@ -9,7 +9,7 @@ Analyze an image for SURF keypoints. Draw a lasso around the keypoints you would
 
 ![Find Features](docs/features.png)
 
-- Circles show the rough size of each detected feature. grey features are the weakest and white are the strongest. The more good features, the better your detector.
+- Circles show the rough size of each detected feature. Gray features are the weakest and white are the strongest. The more good features, the better a detector.
 
 ![Find Features](docs/circles.png)
 
