@@ -3,7 +3,7 @@ ofxObjectSurfer
 
 Introduction
 ------------
-Analyze an image for SURF keypoints. Draw a lasso around the keypoints you would like to use in a detector. Then save object descriptor files. Later, load descriptor files and detect objects in new images.
+Analyze video grabber frames (or a loaded image) for SURF keypoints. Draw a lasso around the keypoints you would like to use in a detector. Then save object descriptor files. Later, load descriptor files and detect objects in new images.
 
 - Choose an object that generates lots of features. Textures, patterns and text are good candidates for feature detection.
 
